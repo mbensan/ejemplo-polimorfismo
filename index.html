@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Ejemplo de Polimorfismo</title>
+    <style>
+      #saludos {
+        background-color: beige;
+        border-radius: 8px;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ejemplo de Polimorfismo</h1>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Tipo de Saludo</label>
+              <select class="form-select" aria-label="Default select example">
+                <option value="alert">Alert</option>
+                <option value="h2">Usando un H2</option>
+                <option value="consola">con la Consola</option>
+              </select>
+            </div>
+
+            <button id="saludar-btn" class="btn btn-primary">Saludar</button>
+          </div>
+        </div>
+        <div class="col">
+          <div id="saludos">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="motores.js"></script>
+    <script>
+      class Saludador {
+        constructor(nombre) {
+          this._nombre = nombre
+        }
+        get_mensaje() {
+          return `Bonjour ${this._nombre}, comment allez vous?`
+        }
+        saludar () {
+          throw Error('Método no implementado')
+        }
+      }
+
+      class SaludadorAlert extends Saludador {
+        constructor(nombre) {
+          super(nombre);
+        }
+        saludar () {
+          const mensaje = this.get_mensaje();
+          alert(mensaje)
+        }
+      }
+
+      class SaludadorH2 extends Saludador {
+        constructor(nombre) {
+          super(nombre);
+        }
+        saludar () {
+          const mensaje = this.get_mensaje();
+          $('#saludos').append(`<h2>${mensaje}</h2>`)
+        }
+      }
+
+      class SaludadorConsola extends Saludador {
+        constructor(nombre) {
+          super(nombre);
+        }
+        saludar () {
+          const mensaje = this.get_mensaje();
+          console.log(mensaje);
+        }
+      }
+
+    
+      // Ahora usamos las clases para interactuar con el DOM
+      $('#saludar-btn').on('click', function() {
+        // primero obtengo el nombre y el tipo de saludo
+        const nombre = $('#nombre').val();
+        const tipo_saludo = $('select').val();
+
+        // después creo mi Saludador dependiendo del tipo de saludo que elija el usuario
+        let saludador;
+        if (tipo_saludo == 'alert') {
+          saludador = new SaludadorAlert(nombre);
+
+        } else if (tipo_saludo == 'h2') {
+          saludador = new SaludadorH2(nombre)
+        
+        } else if (tipo_saludo == 'consola') {
+          saludador = new SaludadorConsola(nombre)
+        }
+
+        // Finalmente, saludo!
+        saludador.saludar()
+      })
+    </script>
+  </body>
+</html>
